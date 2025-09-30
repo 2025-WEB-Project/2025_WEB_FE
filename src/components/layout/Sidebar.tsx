@@ -36,18 +36,46 @@ const DayCell = styled.button<{ $isToday?: boolean; $isEmpty?: boolean; $selecte
 
 const Small = styled.div` color:#888; font-size:13px; `;
 
+/* 하단 영역(로그아웃/탈퇴) */
+const Bottom = styled.div`
+  margin-top: auto;                 /* 맨 아래로 밀기 */
+  padding-top: 12px;
+  border-top: 1px solid ${p=>p.theme.colors.border};
+  display: grid;
+  gap: 8px;
+`;
+
+const LineBtn = styled.button`
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 12px;
+  background: #fff;
+  border: 1px solid ${p=>p.theme.colors.border};
+  border-radius: ${p=>p.theme.radius};
+`;
+
+const LogoDot = styled.span`
+  width: 14px; height: 14px; border-radius: 50%;
+  background: ${p=>p.theme.colors.primary};
+  display: inline-block;
+`;
+
 function buildMonth(date = new Date()){
   const y = date.getFullYear();
-  const m = date.getMonth(); // 0~11
+  const m = date.getMonth();
   const first = new Date(y, m, 1);
   const last = new Date(y, m+1, 0);
-  const startPad = first.getDay(); // 0: Sun
+  const startPad = first.getDay();
   const total = last.getDate();
 
   const cells: { day?: number; isEmpty?: boolean; isToday?: boolean }[] = [];
   for(let i=0;i<startPad;i++) cells.push({ isEmpty:true });
   for(let d=1; d<=total; d++){
-    const isToday = (new Date().getFullYear()===y && new Date().getMonth()===m && new Date().getDate()===d);
+    const isToday = (
+      new Date().getFullYear()===y &&
+      new Date().getMonth()===m &&
+      new Date().getDate()===d
+    );
     cells.push({ day:d, isEmpty:false, isToday });
   }
   return { y, m, cells };
@@ -67,8 +95,10 @@ export default function Sidebar(){
         <div style={{fontSize:24, fontWeight:700, marginBottom:8}}>000님</div>
         <div style={{color:"#666"}}>000대학교</div>
         <div style={{color:"#666"}}>0학년</div>
-        <button style={{marginTop:14, width:"100%", padding:"12px", borderRadius:12, border:"none", background:"#cfe0d7"}}
-                onClick={()=> nav("/present")}>
+        <button
+          style={{marginTop:14, width:"100%", padding:"12px", borderRadius:12, border:"none", background:"#cfe0d7"}}
+          onClick={()=> nav("/present")}
+        >
           발표 하러 가기
         </button>
       </Card>
@@ -79,31 +109,39 @@ export default function Sidebar(){
 
       <Grid>
         {["S","M","T","W","T","F","S"].map((d) => (
-            <div key={d} style={{ textAlign: "center", color: "#999" }}>
-                {d}
-        </div>
+          <div key={d} style={{ textAlign: "center", color: "#999" }}>
+            {d}
+          </div>
         ))}
 
         {cells.map((c, i) => (
-            <DayCell
-                key={i}
-                onClick={() => {
-                    if (!c.isEmpty && c.day) {
-                        setSelected(c.day);
-                        setMessage("아직 발표 피드백 시작 전 입니다.");
-                    }
-                }}
-                $isToday={!!c.isToday}
-                $isEmpty={!!c.isEmpty}
-                $selected={selected === c.day}
-            >
-                {c.day ?? ""}
-            </DayCell>
+          <DayCell
+            key={i}
+            onClick={() => {
+              if (!c.isEmpty && c.day) {
+                setSelected(c.day);
+                setMessage("아직 발표 피드백 시작 전 입니다.");
+              }
+            }}
+            $isToday={!!c.isToday}
+            $isEmpty={!!c.isEmpty}
+            $selected={selected === c.day}
+          >
+            {c.day ?? ""}
+          </DayCell>
         ))}
-    </Grid>
+      </Grid>
 
-    {message && <Small>{message}</Small>}
+      {message && <Small>{message}</Small>}
 
+      <Bottom>
+        <LineBtn onClick={()=> nav("/login")}>
+          <LogoDot /> 로그아웃
+        </LineBtn>
+        <LineBtn onClick={()=> nav("/")}>
+          <LogoDot /> 탈퇴하기
+        </LineBtn>
+      </Bottom>
     </Wrap>
   );
 }
