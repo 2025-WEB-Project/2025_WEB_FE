@@ -3,36 +3,51 @@ import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Wrap = styled.div`
-  max-width: 680px; margin: 100px auto; padding: 0 20px;
+  max-width: 680px; 
+  margin: 100px auto; 
+  padding: 0 20px;
+  display: flex;         
+  flex-direction: column;   
+  align-items: center;
 `;
 
 const Title = styled.h1`
-  font-size: 44px; line-height:1.2; margin:0 0 40px;
+  font-size: 44px; 
+  line-height:1.2; 
+  margin:0 0 40px;
+  max-width: 520px; 
+  text-align: center; 
 `;
 
 const Form = styled.div`
   width: 100%;
   max-width: 520px;  
+  margin: 0 auto;
 `;
 
 const Field = styled.div`
-  display:grid; gap:10px; margin:18px 0;
+  display:grid; 
+  gap:10px; 
+  margin:18px 0;
 `;
 
 const Label = styled.label`
-  font-size:14px; color:${p=>p.theme.colors.text};
+  font-size:14px; 
+  color:${p=>p.theme.colors.text};
 `;
 
 const ErrorText = styled.div`
-  color: ${p=>p.theme.colors.danger}; font-size: 13px;
-  min-height: 18px;  /* 자리 유지 */
+  color: ${p=>p.theme.colors.danger}; 
+  font-size: 13px;
+  min-height: 18px;  
 `;
 
 const RowSplit = styled.div`
   display:flex;
-  justify-content:space-between;   /* 좌/우 끝으로 벌리기 */
+  justify-content:space-between;  
   align-items:center;
   margin-top: 10px;
   color:#888; 
@@ -93,7 +108,7 @@ export default function Login(){
         </Button>
 
         <RowSplit>
-            <span>회원가입</span>
+            <Link to="/signup">회원가입</Link>
             <span>계정 찾기&nbsp;|&nbsp;비밀번호 찾기</span>
         </RowSplit>
       </Form>

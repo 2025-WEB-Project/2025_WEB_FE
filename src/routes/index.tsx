@@ -1,24 +1,31 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../pages/Main";
 import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import MyPage from "../pages/MyPage";
 import AppLayout from "../components/layout/AppLayout";
-import Present from "../pages/Present";   // ✅ 그대로 사용
+import Present from "../pages/Present";
+
+import About from "../pages/About";       
+import Features from "../pages/Features"; 
+import Guide from "../pages/Guide";       
+import Team from "../pages/Team";         
 
 export const router = createBrowserRouter([
   { path: "/", element: <Main /> },
+  { path: "/about", element: <About /> },        
+  { path: "/features", element: <Features /> },  
+  { path: "/guide", element: <Guide /> },        
+  { path: "/team", element: <Team /> },          
+
   { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
 
-  // ✅ 발표 전용 단독 페이지 (사이드바 없음)
-  { path: "/present", element: <Present /> },
+  { path: "/present", element: <Present /> },   
 
-  // 앱 내부(사이드바 있는 영역)
   {
     path: "/app",
     element: <AppLayout />,
-    children: [
-      { index: true, element: <MyPage /> },
-      // ⛔ 여기 있던 { path: "present", ... }는 삭제하세요
-    ]
+    children: [{ index: true, element: <MyPage /> }]
   }
 ]);
