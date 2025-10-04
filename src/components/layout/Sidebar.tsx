@@ -2,11 +2,21 @@
 import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logoImg from "../../assets/로고.png"; 
 
 const Wrap = styled.aside`
   width: 280px; border-right:1px solid ${p=>p.theme.colors.border};
   background:#fff; height:100%; padding: 20px;
   display:flex; flex-direction:column; gap:18px;
+`;
+
+const Brand = styled.h3`
+  margin:0 0 6px;
+  display:flex; align-items:center; gap:10px;
+  font-weight: 800;
+`;
+const BrandLogo = styled.img`
+  width: 60px; height: 60px; object-fit: contain; 
 `;
 
 const Card = styled.div`
@@ -36,22 +46,24 @@ const DayCell = styled.button<{ $isToday?: boolean; $isEmpty?: boolean; $selecte
 
 const Small = styled.div` color:#888; font-size:13px; `;
 
-/* 하단 영역(로그아웃/탈퇴) */
 const Bottom = styled.div`
-  margin-top: auto;                 /* 맨 아래로 밀기 */
+  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid ${p=>p.theme.colors.border};
   display: grid;
-  gap: 8px;
+  gap: 6px;                     // ← 8px → 6px
 `;
 
 const LineBtn = styled.button`
-  width: 100%;
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 12px;
-  background: #fff;
-  border: 1px solid ${p=>p.theme.colors.border};
-  border-radius: ${p=>p.theme.radius};
+  width: auto;                  // ← 100% → auto
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 4px;             // ← 12px → 6px 4px (작게)
+  background: transparent;      // ← #fff → transparent
+  border: none;                 // ← 테두리 제거
+  border-radius: 6px;
+  color: #666;                  // 작은 텍스트 느낌
+  font-size: 13px;              // 살짝 더 작게
+  cursor: pointer;
 `;
 
 const LogoDot = styled.span`
@@ -90,7 +102,11 @@ export default function Sidebar(){
 
   return (
     <Wrap>
-      <h3 style={{margin:"0 0 6px"}}>발표의 숲</h3>
+      <Brand>
+        <BrandLogo src={logoImg} alt="발표의 숲 로고" />
+        발표의 숲
+      </Brand>
+
       <Card>
         <div style={{fontSize:24, fontWeight:700, marginBottom:8}}>000님</div>
         <div style={{color:"#666"}}>000대학교</div>

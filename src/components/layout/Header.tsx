@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import defaultLogo from "../../assets/logo.png";
 
-type HeaderProps = { hideLogin?: boolean };
+type HeaderProps = { hideLogin?: boolean; logoSrc?: string }; 
 
 const Bar = styled.header`
   height: 72px; display:flex; align-items:center; justify-content:space-between;
@@ -11,6 +12,7 @@ const Bar = styled.header`
 const Left = styled.div`display:flex; align-items:center; gap:18px;`;
 const Logo = styled(Link)`display:flex; align-items:center; gap:10px; font-weight:700;`;
 const Dot = styled.span`width:18px; height:18px; border-radius:50%; background:${p=>p.theme.colors.primary}; display:inline-block;`;
+const LogoImg = styled.img`width: 60px; height: 60px;object-fit:contain;`;  
 const Nav = styled.nav`display:flex; gap:22px;`;
 
 const NavItem = styled(NavLink)`
@@ -18,12 +20,15 @@ const NavItem = styled(NavLink)`
   &.active { border-color:${p=>p.theme.colors.primary}; font-weight:700; }
 `;
 
-export default function Header({ hideLogin }: HeaderProps){
+export default function Header({ hideLogin, logoSrc = defaultLogo }: HeaderProps){ 
   const nav = useNavigate();
   return (
     <Bar>
       <Left>
-        <Logo to="/"><Dot/>{`발표의 숲`}</Logo>
+        <Logo to="/">
+          <LogoImg src={logoSrc} alt="발표의 숲 로고" />
+          {`발표의 숲`}
+        </Logo>
         <Nav>
           <NavItem to="/about">소개</NavItem>
           <NavItem to="/features">기능 소개</NavItem>
