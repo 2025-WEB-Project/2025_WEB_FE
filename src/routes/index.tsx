@@ -9,7 +9,8 @@ import Present from "../pages/Present";
 import About from "../pages/About";       
 import Features from "../pages/Features"; 
 import Guide from "../pages/Guide";       
-import Team from "../pages/Team";         
+import Team from "../pages/Team";   
+import Records from "../pages/Records";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Main /> },
@@ -26,6 +27,9 @@ export const router = createBrowserRouter([
   {
     path: "/app",
     element: <AppLayout />,
-    children: [{ index: true, element: <MyPage /> }]
+    children: [
+      { index: true, element: <MyPage /> },
+      { path: "records", element: <Records /> },
+    ]
   }
 ]);

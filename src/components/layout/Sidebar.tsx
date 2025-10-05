@@ -1,9 +1,10 @@
 // src/components/layout/Sidebar.tsx
 import styled from "styled-components";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Wrap = styled.aside`
+  position: relative;           
   width: 280px;
   border-right: 1px solid ${(p) => p.theme.colors.border};
   background: #fff;
@@ -99,6 +100,68 @@ const LogoDot = styled.span`
   display: inline-block;
 `;
 
+const ConfirmWrap = styled.div`
+  position: relative;        
+  display: inline-block;      
+`;
+
+const ConfirmBubble = styled.div`
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);   
+  transform: translateX(-50%);
+  z-index: 30;
+
+  background: #fff;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 12px;
+  color: #333;
+  font-size: 13px;
+  min-width: 240px;          
+  max-width: 260px;
+
+  &:after{
+    content:"";
+    position:absolute;
+    left: 20%;
+    bottom: -6px;             
+    width: 12px;
+    height: 12px;
+    background:#fff;
+    border-left: 1px solid ${(p) => p.theme.colors.border};
+    border-bottom: 1px solid ${(p) => p.theme.colors.border};
+    transform: translateX(-50%) rotate(45deg);
+  }
+`;
+
+
+const ConfirmActions = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 8px;
+  margin-top: 8px;
+
+  button{
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+`;
+
+const NoBtn = styled.button`
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: #fff;
+`;
+
+const YesBtn = styled.button`
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: #f2f4f6;
+`;
+
 function buildMonth(date = new Date()) {
   const y = date.getFullYear();
   const m = date.getMonth();
@@ -122,9 +185,14 @@ function buildMonth(date = new Date()) {
 export default function Sidebar() {
   const [selected, setSelected] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const now = useMemo(() => new Date(), []);
   const { y, m, cells } = useMemo(() => buildMonth(now), [now]);
+
   const nav = useNavigate();
+  const location = useLocation();
+  const onRecordsPage = location.pathname.startsWith("/app/records");
 
   return (
     <Wrap>
@@ -132,22 +200,34 @@ export default function Sidebar() {
 
       <Card>
         <div style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>000님</div>
-        <div style={{ color: "#666" }}>000대학교</div>
-        <div style={{ color: "#666" }}>0학년</div>
-        <button
-          style={{
-            marginTop: 14,
-            width: "100%",
-            padding: "12px",
-            borderRadius: 12,
-            border: "none",
-            background: "#cfe0d7",
-          }}
-          onClick={() => nav("/present")}
-        >
-          발표 하러 가기
-        </button>
+        <div style={{ color: "#666" }}>sample@example.com</div>
       </Card>
+
+      <button
+        style={{
+          width: "100%",
+          padding: "12px",
+          borderRadius: 12,
+          border: "none",
+          background: "#cfe0d7",
+        }}
+        onClick={() => nav("/present")}
+      >
+        발표 하러 가기
+      </button>
+
+      <button
+        style={{
+          width: "100%",
+          padding: "12px",
+          borderRadius: 12,
+          border: "none",
+          background: "#cfe0d7",
+        }}
+        onClick={() => (onRecordsPage ? nav("/app") : nav("/app/records"))}
+      >
+        {onRecordsPage ? "홈으로 이동" : "전체 기록 확인"}
+      </button>
 
       <div style={{ fontSize: 14, marginTop: 6, marginBottom: 4 }}>
         {new Intl.DateTimeFormat("ko", { month: "long", year: "numeric" }).format(
@@ -182,14 +262,61 @@ export default function Sidebar() {
 
       {message && <Small>{message}</Small>}
 
-      <Bottom>
-        <LineBtn onClick={() => nav("/login")}>
-          <LogoDot /> 로그아웃
-        </LineBtn>
-        <LineBtn onClick={() => nav("/")}>
+      {showConfirm && (
+        <ConfirmBubble role="dialog" aria-label="탈퇴 확인">
+          <div>정말 탈퇴하시겠습니까?</div>
+          <ConfirmActions>
+            <NoBtn type="button" onClick={() => setShowConfirm(false)}>
+              아니요
+            </NoBtn>
+            <YesBtn
+              type="button"
+              onClick={() => {
+                setShowConfirm(false);
+                nav("/");         
+              }}
+            >
+              네
+            </YesBtn>
+          </ConfirmActions>
+        </ConfirmBubble>
+      )}
+
+    <Bottom>
+      <LineBtn onClick={() => nav("/")}>
+        <LogoDot /> 로그아웃
+      </LineBtn>
+
+      <ConfirmWrap>
+        <LineBtn
+          onClick={() => setShowConfirm((v) => !v)}
+          aria-expanded={showConfirm}
+        >
           <LogoDot /> 탈퇴하기
         </LineBtn>
-      </Bottom>
+
+        {showConfirm && (
+          <ConfirmBubble role="dialog" aria-label="탈퇴 확인">
+            <div>정말 탈퇴하시겠습니까?</div>
+            <ConfirmActions>
+              <NoBtn type="button" onClick={() => setShowConfirm(false)}>
+                아니요
+              </NoBtn>
+              <YesBtn
+                type="button"
+                onClick={() => {
+                  setShowConfirm(false);
+                  nav("/"); 
+                }}
+              >
+                네
+              </YesBtn>
+            </ConfirmActions>
+          </ConfirmBubble>
+        )}
+      </ConfirmWrap>
+    </Bottom>
+
     </Wrap>
   );
 }

@@ -1,30 +1,31 @@
+// src/pages/Signup.tsx
 import styled from "styled-components";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Wrap = styled.div`
   max-width: 680px;
   margin: 100px auto;
   padding: 0 20px;
-  display: flex;               
-  flex-direction: column;      
-  align-items: center;  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Title = styled.h1`
   font-size: 44px;
   line-height: 1.2;
   margin: 0 0 40px;
-  max-width: 520px;           
+  max-width: 520px;
   text-align: center;
 `;
 
 const Form = styled.div`
   width: 100%;
   max-width: 520px;
-  margin: 0 auto; 
+  margin: 0 auto;
 `;
 
 const Field = styled.div`
@@ -41,16 +42,28 @@ const Label = styled.label`
 const ErrorText = styled.div`
   color: ${(p) => p.theme.colors.danger};
   font-size: 13px;
-  min-height: 18px; 
+  min-height: 18px;
 `;
 
-const RowSplit = styled.div`
+
+const EmailRow = styled.div`
   display: flex;
-  justify-content: space-between; 
+  gap: 10px;
   align-items: center;
-  margin-top: 10px;
-  color: #888;
+`;
+
+const EmailInput = styled(Input)`
+  flex: 1;               
+`;
+
+const DupButton = styled.button`
+  padding: 10px 12px;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: ${(p) => p.theme.radius};  
+  background: #fff;
+  white-space: nowrap;
   font-size: 14px;
+  cursor: pointer;
 `;
 
 export default function Signup() {
@@ -67,9 +80,10 @@ export default function Signup() {
     pw2: false,
   });
 
+  const [dupMsg, setDupMsg] = useState<string>("");
+
   const nameOk = useMemo(() => name.trim().length >= 2, [name]);
   const emailOk = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), [email]);
-  // 영문/숫자/특수문자 포함 8자 이상
   const pwOk = useMemo(
     () => /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/.test(pw),
     [pw]
@@ -80,10 +94,21 @@ export default function Signup() {
 
   const submit = () => {
     if (!canSubmit) return;
-    // TODO: API 연동 시 여기에 POST 호출
     alert("회원가입이 완료되었습니다. 로그인 해주세요.");
     nav("/login");
   };
+
+  const checkDuplicate = () => {
+    setTouched((s) => ({ ...s, email: true }));
+    if (!emailOk) {
+      setDupMsg("올바른 이메일을 먼저 입력하세요.");
+      return;
+    }
+    // TODO: 서버 연동 시 실제 중복 체크 API 호출
+    setDupMsg("중복 확인은 서버 연동 후 제공됩니다.");
+  };
+
+  const emailError = touched.email && email.length > 0 && !emailOk;
 
   return (
     <Wrap>
@@ -108,17 +133,23 @@ export default function Signup() {
 
         <Field>
           <Label>이메일(아이디)</Label>
-          <Input
-            placeholder="sample@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => setTouched((s) => ({ ...s, email: true }))}
-            $error={touched.email && email.length > 0 && !emailOk}
-          />
+          <EmailRow>
+            <EmailInput
+              placeholder="sample@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setDupMsg("");
+              }}
+              onBlur={() => setTouched((s) => ({ ...s, email: true }))}
+              $error={emailError}
+            />
+            <DupButton type="button" onClick={checkDuplicate}>
+              중복확인
+            </DupButton>
+          </EmailRow>
           <ErrorText>
-            {touched.email && email.length > 0 && !emailOk
-              ? "올바른 이메일 형식을 입력해주세요."
-              : ""}
+            {emailError ? "올바른 이메일 형식을 입력해주세요." : dupMsg}
           </ErrorText>
         </Field>
 
@@ -159,7 +190,6 @@ export default function Signup() {
         <Button style={{ width: "100%" }} disabled={!canSubmit} onClick={submit}>
           회원가입
         </Button>
-
       </Form>
     </Wrap>
   );

@@ -109,7 +109,6 @@ export default function Login(){
 
         <RowSplit>
             <Link to="/signup">회원가입</Link>
-            <span>계정 찾기&nbsp;|&nbsp;비밀번호 찾기</span>
         </RowSplit>
       </Form>
     </Wrap>
