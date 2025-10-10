@@ -2,9 +2,11 @@
 import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import logoutIcon from "../../assets/logout.png";
+import trashIcon from "../../assets/trash.png";
 
 const Wrap = styled.aside`
-  position: relative;           
+  position: relative;
   width: 280px;
   border-right: 1px solid ${(p) => p.theme.colors.border};
   background: #fff;
@@ -92,58 +94,56 @@ const LineBtn = styled.button`
   cursor: pointer;
 `;
 
-const LogoDot = styled.span`
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: ${(p) => p.theme.colors.primary};
-  display: inline-block;
+const IconImg = styled.img`
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 `;
 
+/* ── 탈퇴 확인 말풍선 UI ───────────────────────────────────────────── */
 const ConfirmWrap = styled.div`
-  position: relative;        
-  display: inline-block;      
+  position: relative;
+  display: inline-block;
 `;
 
 const ConfirmBubble = styled.div`
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 10px);   
-  transform: translateX(-50%);
-  z-index: 30;
+  left: 0;
+  bottom: calc(100% + 10px);
+  transform: none;
+  z-index: 100;
 
   background: #fff;
   border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   padding: 12px;
   color: #333;
   font-size: 13px;
-  min-width: 240px;          
+  min-width: 240px;
   max-width: 260px;
 
-  &:after{
-    content:"";
-    position:absolute;
-    left: 20%;
-    bottom: -6px;             
+  &:after {
+    content: "";
+    position: absolute;
+    left: 28px;
+    bottom: -6px;
     width: 12px;
     height: 12px;
-    background:#fff;
+    background: #fff;
     border-left: 1px solid ${(p) => p.theme.colors.border};
     border-bottom: 1px solid ${(p) => p.theme.colors.border};
-    transform: translateX(-50%) rotate(45deg);
+    transform: rotate(45deg);
   }
 `;
 
-
 const ConfirmActions = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 8px;
 
-  button{
+  button {
     width: 100%;
     padding: 8px 0;
     border-radius: 8px;
@@ -162,6 +162,7 @@ const YesBtn = styled.button`
   background: #f2f4f6;
 `;
 
+/* ── 유틸 ─────────────────────────────────────────────────────────── */
 function buildMonth(date = new Date()) {
   const y = date.getFullYear();
   const m = date.getMonth();
@@ -182,6 +183,7 @@ function buildMonth(date = new Date()) {
   return { y, m, cells };
 }
 
+/* ── 컴포넌트 ─────────────────────────────────────────────────────── */
 export default function Sidebar() {
   const [selected, setSelected] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -262,61 +264,45 @@ export default function Sidebar() {
 
       {message && <Small>{message}</Small>}
 
-      {showConfirm && (
-        <ConfirmBubble role="dialog" aria-label="탈퇴 확인">
-          <div>정말 탈퇴하시겠습니까?</div>
-          <ConfirmActions>
-            <NoBtn type="button" onClick={() => setShowConfirm(false)}>
-              아니요
-            </NoBtn>
-            <YesBtn
-              type="button"
-              onClick={() => {
-                setShowConfirm(false);
-                nav("/");         
-              }}
-            >
-              네
-            </YesBtn>
-          </ConfirmActions>
-        </ConfirmBubble>
-      )}
-
-    <Bottom>
-      <LineBtn onClick={() => nav("/")}>
-        <LogoDot /> 로그아웃
-      </LineBtn>
-
-      <ConfirmWrap>
-        <LineBtn
-          onClick={() => setShowConfirm((v) => !v)}
-          aria-expanded={showConfirm}
-        >
-          <LogoDot /> 탈퇴하기
+      <Bottom>
+        {/* 로그아웃 → 메인으로 */}
+        <LineBtn onClick={() => nav("/")}>
+          <IconImg src={logoutIcon} alt="로그아웃" />
+          로그아웃
         </LineBtn>
 
-        {showConfirm && (
-          <ConfirmBubble role="dialog" aria-label="탈퇴 확인">
-            <div>정말 탈퇴하시겠습니까?</div>
-            <ConfirmActions>
-              <NoBtn type="button" onClick={() => setShowConfirm(false)}>
-                아니요
-              </NoBtn>
-              <YesBtn
-                type="button"
-                onClick={() => {
-                  setShowConfirm(false);
-                  nav("/"); 
-                }}
-              >
-                네
-              </YesBtn>
-            </ConfirmActions>
-          </ConfirmBubble>
-        )}
-      </ConfirmWrap>
-    </Bottom>
+        {/* 탈퇴 → 버튼 위 말풍선 */}
+        <ConfirmWrap>
+          <LineBtn
+            onClick={() => setShowConfirm((v) => !v)}
+            aria-expanded={showConfirm}
+            aria-controls="leave-confirm"
+          >
+            <IconImg src={trashIcon} alt="탈퇴하기" />
+            탈퇴하기
+          </LineBtn>
 
+          {showConfirm && (
+            <ConfirmBubble id="leave-confirm" role="dialog" aria-label="탈퇴 확인">
+              <div>정말 탈퇴하시겠습니까?</div>
+              <ConfirmActions>
+                <NoBtn type="button" onClick={() => setShowConfirm(false)}>
+                  아니요
+                </NoBtn>
+                <YesBtn
+                  type="button"
+                  onClick={() => {
+                    setShowConfirm(false);
+                    nav("/"); // TODO: 실제 탈퇴 API 연동 시 처리
+                  }}
+                >
+                  네
+                </YesBtn>
+              </ConfirmActions>
+            </ConfirmBubble>
+          )}
+        </ConfirmWrap>
+      </Bottom>
     </Wrap>
   );
 }
