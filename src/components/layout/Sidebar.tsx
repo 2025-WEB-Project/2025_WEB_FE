@@ -1,4 +1,3 @@
-// src/components/layout/Sidebar.tsx
 import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -100,7 +99,6 @@ const IconImg = styled.img`
   object-fit: contain;
 `;
 
-/* ── 탈퇴 확인 말풍선 UI ───────────────────────────────────────────── */
 const ConfirmWrap = styled.div`
   position: relative;
   display: inline-block;
@@ -162,7 +160,6 @@ const YesBtn = styled.button`
   background: #f2f4f6;
 `;
 
-/* ── 유틸 ─────────────────────────────────────────────────────────── */
 function buildMonth(date = new Date()) {
   const y = date.getFullYear();
   const m = date.getMonth();
@@ -183,7 +180,6 @@ function buildMonth(date = new Date()) {
   return { y, m, cells };
 }
 
-/* ── 컴포넌트 ─────────────────────────────────────────────────────── */
 export default function Sidebar() {
   const [selected, setSelected] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -213,7 +209,7 @@ export default function Sidebar() {
           border: "none",
           background: "#cfe0d7",
         }}
-        onClick={() => nav("/present")}
+        onClick={() => nav("/present_start")}
       >
         발표 하러 가기
       </button>
@@ -265,13 +261,11 @@ export default function Sidebar() {
       {message && <Small>{message}</Small>}
 
       <Bottom>
-        {/* 로그아웃 → 메인으로 */}
         <LineBtn onClick={() => nav("/")}>
           <IconImg src={logoutIcon} alt="로그아웃" />
           로그아웃
         </LineBtn>
 
-        {/* 탈퇴 → 버튼 위 말풍선 */}
         <ConfirmWrap>
           <LineBtn
             onClick={() => setShowConfirm((v) => !v)}
