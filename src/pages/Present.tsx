@@ -320,8 +320,26 @@ export default function Present() {
     const resultsFace = faceLandmarker.detectForVideo(video, ts);
     const resultsPose = poseLandmarker.detectForVideo(video, ts);
 
+<<<<<<< HEAD
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+=======
+    // 콘솔창에 좌표 표시 (확인용)
+    if (resultsFace.faceLandmarks && resultsFace.faceLandmarks.length > 0) {
+      console.log("얼굴 랜드마크 좌표:", resultsFace.faceLandmarks[0]);
+    }
+    if (resultsPose.landmarks && resultsPose.landmarks.length > 0) {
+      console.log("포즈 랜드마크 좌표:", resultsPose.landmarks[0]);
+    }
+
+    // 캔버스 준비
+    const canvasCtx = canvas.getContext("2d");
+    if (canvasCtx) {
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.save();
+      canvasCtx.scale(-1, 1);
+      canvasCtx.translate(-canvas.width, 0);
+>>>>>>> feature/presentation
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
