@@ -143,6 +143,7 @@ export default function PresentStart() {
           />;
         
         case 3:
+          // subject
           if (presentationType === 'subject') {
             return <Step3_1Subject 
               onNext={handleNextStep} 
@@ -174,7 +175,7 @@ export default function PresentStart() {
           
         case 6:
           return <Step6Time 
-            onNext={handleNextStep} 
+            // onNext={handleNextStep} 
             onPrev={handlePrevStep}
             onStep={currentStep} 
           />;
