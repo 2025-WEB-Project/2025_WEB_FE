@@ -472,7 +472,7 @@ export default function Present() {
       const gazeRatio = meterRef.current.gazeOnFrames / secFrames;
       const gazeScore = Math.round(100 * gazeRatio);
 
-      // 2) sway score (yaw frequency)
+      // 2) headShaking score (yaw frequency)
       const T = (now - yawSeriesRef.current.t0) / 1000; // s (누적)
       let zc = 0;
       let last: number | null = null;
@@ -486,7 +486,7 @@ export default function Present() {
         last = s;
       }
       const f = T > 0 ? zc / (2 * T) : 0;
-      const swayScore = Math.round(100 * Math.exp(-0.7 * f)); // k=0.7
+      const headShakingScore = Math.round(100 * Math.exp(-0.7 * f)); // k=0.7
 
       // 3) expression score (motion)
       const motionPerSec = meterRef.current.motionAccum / secFrames;
@@ -509,7 +509,7 @@ export default function Present() {
         "background:#111;color:#0f0;padding:2px 6px;border-radius:4px",
         {
           gaze: { ratio: gazeRatio.toFixed(2), score: gazeScore },
-          sway: { hz: f.toFixed(2), score: swayScore },
+          headShaking: { hz: f.toFixed(2), score: headShakingScore },
           expression: { motionPerSec: Number(motionPerSec.toFixed(4)), score: exprScore },
           posture: { score: postureScore },
           frames: secFrames,

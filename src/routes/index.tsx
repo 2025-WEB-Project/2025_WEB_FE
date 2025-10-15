@@ -7,6 +7,7 @@ import AppLayout from "../components/layout/AppLayout";
 
 import Present from "../pages/Present";
 import PresentStart from "../pages/PresentStart";
+import PresentWhisper from "../pages/PresentVoice";
 
 import About from "../pages/About";       
 import Features from "../pages/Features"; 
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
 
   { path: "/present", element: <Present /> },  
   { path: "/present_start", element: <PresentStart /> }, 
+  { path: "/present_voice", element: <PresentWhisper /> },
 
   {
     path: "/app",
