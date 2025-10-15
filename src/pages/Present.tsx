@@ -8,10 +8,13 @@ import {
   FaceLandmarker,
   PoseLandmarker,
   FilesetResolver,
+  type NormalizedLandmark,
+  type FaceLandmarkerResult,
+  type PoseLandmarkerResult,
 } from "@mediapipe/tasks-vision";
-import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { drawLandmarks } from "@mediapipe/drawing_utils";
 
+// ---------- Styled Components ----------
 const Page = styled.div`
   height: 100%;
   display: flex;
@@ -34,8 +37,8 @@ const OutputCanvas = styled.canvas`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 2;              
-  pointer-events: none;    
+  z-index: 2;
+  pointer-events: none;
 `;
 
 const Video = styled.video`
@@ -43,7 +46,7 @@ const Video = styled.video`
   height: 100%;
   object-fit: cover;
   background: transparent;
-  transform: scaleX(-1); 
+  transform: scaleX(-1);
   z-index: 1;
 `;
 
@@ -103,8 +106,8 @@ const StartIcon = styled.span`
 
 const Right = styled.div``;
 
-const SHOW_FACE = true; 
-
+// ---------- Constants ----------
+const SHOW_FACE = true;
 
 const faceConnections = {
   tesselation: FaceLandmarker.FACE_LANDMARKS_TESSELATION.map(
@@ -156,6 +159,7 @@ const POSE_LINES: [number, number][] = [
   [28, 32],
 ];
 
+// ---------- Utility ----------
 function customDrawConnectors(
   ctx: CanvasRenderingContext2D,
   landmarks: NormalizedLandmark[],
@@ -175,14 +179,12 @@ function customDrawConnectors(
   ctx.stroke();
 }
 
-
+// ---------- Main Component ----------
 export default function Present() {
   const faceLandmarkerRef = useRef<FaceLandmarker | null>(null);
   const poseLandmarkerRef = useRef<PoseLandmarker | null>(null);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
   const cameraRef = useRef<Camera | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -193,7 +195,6 @@ export default function Present() {
     const initialize = async () => {
       try {
         setLoading(true);
-
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
         );
@@ -202,7 +203,7 @@ export default function Present() {
           baseOptions: {
             modelAssetPath:
               "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-            delegate: "GPU",
+            delegate: "CPU",
           },
           runningMode: "VIDEO",
           outputFaceBlendshapes: false,
@@ -210,12 +211,11 @@ export default function Present() {
         });
         faceLandmarkerRef.current = faceLandmarker;
 
-        // 감지 임계값 완화
         const poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath:
               "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",
-            delegate: "GPU",
+            delegate: "CPU",
           },
           runningMode: "VIDEO",
           numPoses: 1,
@@ -293,11 +293,11 @@ export default function Present() {
 
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
-      ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      if (ctx)
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
   };
 
-  // 프레임 중복 처리 방지
   const lastVideoTimeRef = useRef(-1);
 
   const predictWebcam = async () => {
@@ -312,90 +312,61 @@ export default function Present() {
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     lastVideoTimeRef.current = video.currentTime;
 
     const ts = performance.now();
+    const resultsFace: FaceLandmarkerResult = faceLandmarker.detectForVideo(video, ts);
+    const resultsPose: PoseLandmarkerResult = poseLandmarker.detectForVideo(video, ts);
 
-    const resultsFace = faceLandmarker.detectForVideo(video, ts);
-    const resultsPose = poseLandmarker.detectForVideo(video, ts);
-
-<<<<<<< HEAD
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-=======
-    // 콘솔창에 좌표 표시 (확인용)
-    if (resultsFace.faceLandmarks && resultsFace.faceLandmarks.length > 0) {
-      console.log("얼굴 랜드마크 좌표:", resultsFace.faceLandmarks[0]);
-    }
-    if (resultsPose.landmarks && resultsPose.landmarks.length > 0) {
-      console.log("포즈 랜드마크 좌표:", resultsPose.landmarks[0]);
+    // ✅ 콘솔 로그 추가
+    if (resultsFace.faceLandmarks?.[0]) {
+      console.log("👤 얼굴 인식됨:", resultsFace.faceLandmarks[0]);
+    } else {
+      console.log("❌ 얼굴 인식 안됨");
     }
 
-    // 캔버스 준비
+    if (resultsPose.landmarks?.[0]) {
+      console.log("🧍‍♂️ 자세 인식됨:", resultsPose.landmarks[0]);
+    } else {
+      console.log("❌ 자세 인식 안됨");
+    }
+
     const canvasCtx = canvas.getContext("2d");
     if (canvasCtx) {
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
       canvasCtx.save();
       canvasCtx.scale(-1, 1);
       canvasCtx.translate(-canvas.width, 0);
->>>>>>> feature/presentation
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    // 비디오를 CSS로 좌우반전했으니, 캔버스도 동일하게 반전
-    ctx.scale(-1, 1);
-    ctx.translate(-canvas.width, 0);
+      // ---- Pose ----
+      const poseLm = resultsPose.landmarks?.[0];
+      if (poseLm) {
+        customDrawConnectors(canvasCtx, poseLm, POSE_LINES, {
+          color: "#FFD400",
+          lineWidth: 4,
+        });
+        drawLandmarks(canvasCtx, poseLm, { color: "#FF2D2D", radius: 3.5 });
+      }
 
-    // ---- Pose (전신) ----
-    const poseArrays =
-      (resultsPose as any).landmarks ??
-      (resultsPose as any).poseLandmarks; 
+      // ---- Face ----
+      if (SHOW_FACE && resultsFace.faceLandmarks?.[0]) {
+        const faceLm = resultsFace.faceLandmarks[0];
+        customDrawConnectors(canvasCtx, faceLm, faceConnections.tesselation, {
+          color: "#C0C0C070",
+          lineWidth: 1,
+        });
+        customDrawConnectors(canvasCtx, faceLm, faceConnections.rightIris, {
+          color: "#00B0FF",
+          lineWidth: 2,
+        });
+        customDrawConnectors(canvasCtx, faceLm, faceConnections.leftIris, {
+          color: "#00B0FF",
+          lineWidth: 2,
+        });
+      }
 
-    if (Array.isArray(poseArrays) && poseArrays.length > 0) {
-      const poseLm = poseArrays[0] as NormalizedLandmark[];
-
-
-      customDrawConnectors(ctx, poseLm as any, POSE_LINES, {
-        color: "#FFD400",
-        lineWidth: 4,
-      });
-
-
-      drawLandmarks(ctx as any, poseLm as any, { color: "#FF2D2D", radius: 3.5 });
-    } else {
-      console.debug("Pose not detected", {
-        videoW: video.videoWidth,
-        videoH: video.videoHeight,
-        streamActive: !!video.srcObject,
-        time: ts,
-      });
+      canvasCtx.restore();
     }
-
-    // ---- Face (옵션) ----
-    if (SHOW_FACE && resultsFace.faceLandmarks && resultsFace.faceLandmarks.length > 0) {
-      const faceLm = resultsFace.faceLandmarks[0];
-      customDrawConnectors(
-        ctx,
-        faceLm,
-        faceConnections.tesselation,
-        { color: "#C0C0C070", lineWidth: 1 }
-      );
-      customDrawConnectors(
-        ctx,
-        faceLm,
-        faceConnections.rightIris,
-        { color: "#00B0FF", lineWidth: 2 }
-      );
-      customDrawConnectors(
-        ctx,
-        faceLm,
-        faceConnections.leftIris,
-        { color: "#00B0FF", lineWidth: 2 }
-      );
-    }
-
-    ctx.restore();
   };
 
   return (
@@ -411,8 +382,8 @@ export default function Present() {
           {loading
             ? "모델 로딩 중..."
             : onAir
-            ? "현재 녹화 및 녹음이 진행 되고 있습니다"
-            : "카메라가 꺼져 있습니다"}
+            ? "현재 녹화 및 분석이 진행 중입니다."
+            : "카메라가 꺼져 있습니다."}
         </Status>
         <StopBtn
           onClick={() => (onAir ? stopCamera() : startCamera())}
