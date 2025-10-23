@@ -18,6 +18,7 @@ const TitleWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 60px;
+  margin-top: 240px;
 `;
 
 const Title = styled.h1`
@@ -68,6 +69,7 @@ const ScriptWrapper = styled.div`
   font-weight: 300;
   color: #cfcfcf;
   line-height: 1.5;
+  margin-top: -80px;
 `;
 
 const EnterBtn = styled.button`
@@ -76,17 +78,19 @@ const EnterBtn = styled.button`
   right: 40px;
   width: 200px;
   height: 70px;
-  background-color: #bfbfbf;
+  background-color: #fff;
   border: none;
   border-radius: 15px;
   font-size: 24px;
   font-weight: 500;
-  color: #fff;
+  color: #bfbfbf;
+  border: 1px solid #bfbfbf;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #c4c4c4;
+    background-color: #bfbfbf;
+    color: #fff;
   }
 `;
 

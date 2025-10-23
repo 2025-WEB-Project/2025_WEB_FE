@@ -22,6 +22,7 @@ const Title = styled.h1`
   line-height: 1.3;
   margin-bottom: 100px;
   font-family: 'Cafe24-Ssurround', 'Pretendard';
+  margin-top: -100px;
 `;
 
 const ButtonWrapper = styled.div`

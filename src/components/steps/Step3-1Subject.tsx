@@ -11,7 +11,6 @@ const Container = styled.div`
   height: 100vh;
   background-color: #fafafa;
   font-family: "Pretendard", sans-serif;
-  position: relative;
 `;
 
 const Title = styled.h1`
@@ -23,6 +22,7 @@ const Title = styled.h1`
   line-height: 1.3;
   margin-bottom: 100px;
   font-family: 'Cafe24-Ssurround', 'Pretendard';
+  padding-top: 120px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -51,16 +51,24 @@ const SubBtn = styled.button`
 `;
 
 const Submit = styled.button`
-    width: 300px;
-    height: 80px;
-    background-color: #bfbfbf;
-    border-radius: 15px;
-    font-weight: 600;
-    font-size: 36px;
+  width: 300px;
+  height: 80px;
+  background-color: #fff;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 36px;
+  color: #686868;
+  margin-top: 100px;
+  border: none;
+  box-shadow: 0 5px 15px #d4d4d4;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #a5a5a5;
     color: #fff;
-    margin-top: 100px;
-    border: none;
-`
+  }
+`;
 
 export default function Step3_1Subject({ onNext, onPrev, onStep }: { onNext: () => void; onPrev: () => void; onStep: number; }) {
     return (

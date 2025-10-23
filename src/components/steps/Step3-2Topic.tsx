@@ -8,7 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 1000px;
   background-color: #fafafa;
   font-family: "Pretendard", sans-serif;
 `;
@@ -22,6 +22,7 @@ const Title = styled.h1`
   line-height: 1.3;
   margin-bottom: 100px;
   font-family: 'Cafe24-Ssurround', 'Pretendard';
+  margin-top: -180px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -61,12 +62,18 @@ const Input = styled.input`
 const SubmitBtn = styled.button`
     width: 195px;
     height: 110px;
-    color: #fff;
-    background-color: #bfbfbf;
+    color: #686868;
+    background-color: #fff;
+    box-shadow: 0 5px 15px #d4d4d4;
     font-weight: bold;
     border-radius: 15px;
     font-size: 32px;
     border: none;
+
+    &:hover {
+        background-color: #bfbfbf;
+        color: #fff;
+    }
 `;
 
 export default function Step3_2Topic({ onNext, onPrev, onStep }: { onNext: () => void; onPrev: () => void; onStep: number; }) {

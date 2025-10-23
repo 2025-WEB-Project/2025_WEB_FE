@@ -23,6 +23,7 @@ const Title = styled.h1`
   line-height: 1.3;
   margin-bottom: 100px;
   font-family: 'Cafe24-Ssurround', 'Pretendard';
+  margin-top: -30px;
 `;
 
 const TimeWrapper = styled.div`
@@ -72,17 +73,19 @@ const Unit = styled.span<{ $active: boolean }>`
 const SubmitBtn = styled.button`
   width: 240px;
   height: 80px;
-  background-color: #bfbfbf;
+  background-color: #fff;
   border: none;
   border-radius: 20px;
   font-size: 32px;
   font-weight: 600;
-  color: #fff;
+  color: #797979;
+  box-shadow: 0 5px 15px #d4d4d4;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #c4c4c4;
+    background-color: #bfbfbf;
+    color: #fff;
   }
 `;
 

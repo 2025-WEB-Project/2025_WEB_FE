@@ -6,10 +6,14 @@ import LeftArrowIcon from "../../assets/left-arrow.svg?react";
 
 const Header = styled.div`
   width: 1400px;
+  height: 200px;
   display: flex;
   justify-content: start;
   align-items: center;
   margin-bottom: 10px;
+  margin-top: 50px;
+  position: fixed;
+  top: 0;
 `;
 
 const Number = styled.ul`
