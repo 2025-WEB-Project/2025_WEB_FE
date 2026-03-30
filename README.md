@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# 📑 [Project] AI 기반 실시간 발표/면접 피드백 플랫폼
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **"MediaPipe와 LLM을 활용한 실시간 비언어적 지표 분석 및 개인화 피드백 시스템"**
+> 
+> **웹 서비스 설계 및 실습 프로젝트 최종 결과물 (2025.12)**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 1. Project Overview
+* **배경**: 발표나 면접 시 발생하는 시선 처리 불안, 부자연스러운 몸짓, 발화 속도 등의 문제를 실시간 AI 분석을 통해 교정하고자 기획되었습니다.
+* **핵심 컨셉**: 웹캠 기반의 실시간 모니터링을 통해 시선 안정성과 자세 균형을 분석하고, 10초 간격의 즉각적인 AI 피드백을 제공하여 반복 훈련 효과를 극대화합니다.
+* **주요 역할**: React/TypeScript 기반 프론트엔드 아키텍처 설계, MediaPipe 기반 실시간 분석 로직 구현, Socket.IO를 이용한 실시간 피드백 시스템 구축.
 
-## React Compiler
+## 2. Tech Stack
+* **Frontend**: React, TypeScript, Tailwind CSS
+* **Real-time AI**: MediaPipe (Face/Pose Landmarker), Web Speech API
+* **Backend/Infra**: Node.js, Express, Socket.IO, MySQL
+* **AI Model**: GPT-4o-mini (LLM 기반 개인화 피드백)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 3. Key Engineering Points (Frontend Ops Perspective)
 
-## Expanding the ESLint configuration
+### ✅ 실시간 분석 엔진 및 렌더링 최적화 (Performance Ops)
+브라우저 환경에서 고부하의 AI 모델(MediaPipe)을 구동하며 성능 저하 없는 실시간 인터페이스를 구현했습니다.
+* **비언어적 지표 정량화**: 사용자의 시선(Gaze) 방향과 어깨 수평(Pose) 데이터를 실시간 수집하여, 발표의 안정성을 수치화하는 로직을 구현했습니다.
+* **Canvas API 활용**: MediaPipe 랜드마크 데이터를 기반으로 사용자 화면에 실시간 가이드 라인을 오버레이하여 시각적 피드백의 직관성을 높였습니다.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### ✅ WebSocket 기반 실시간 통신 시스템 (Communication Ops)
+사용자의 발표 데이터와 AI 서버의 피드백 데이터를 지연 없이 주고받기 위한 최적의 파이프라인을 구축했습니다.
+* **Socket.IO 이벤트 설계**: 10초 단위의 데이터 배칭(Batching) 처리를 통해 서버 부하를 줄이면서도, 흐름이 끊기지 않는 즉각적인 피드백 전송 체계를 설계했습니다.
+* **양방향 상태 동기화**: 연습 모드와 실전 모드에 따른 실시간 상태 전이(State Transition)를 프론트엔드 단에서 효율적으로 관리했습니다.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### ✅ 데이터 기반 성장 리포트 및 시각화 (Data Ops)
+단순 일회성 훈련에 그치지 않고, 누적된 데이터를 통해 사용자의 성장 과정을 추적할 수 있는 시스템을 구축했습니다.
+* **시계열 데이터 시각화**: 발표별 점수 변화, 시선 처리 안정도 등을 차트로 시각화하여 객관적인 실력 향상 지표를 제공했습니다.
+* **LLM 피드백 파싱**: GPT-4o-mini로부터 전달받은 비정형 피드백을 구조화하여 UI 컴포넌트에 최적화된 형태로 렌더링했습니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 4. Growth & Takeaways
+* **복잡한 상태 관리 경험**: 실시간 영상 스트림, AI 분석 결과, 서버 피드백 등 동시 다발적인 대규모 상태 변화를 React 환경에서 안정적으로 처리하는 역량을 쌓았습니다.
+* **시스템 안정성 확보**: Helmet, HPP 등 미들웨어를 통한 보안 강화와 Google Analytics를 활용한 사용자 행동 분석 등 실제 서비스 운영 수준의 기술적 고려 사항을 경험했습니다.
